@@ -101,7 +101,7 @@ def write_colour_plist(colour_lookup, export_name, colour_type_name, output_dire
     """
 
     export_directory_name = make_subdirectory(output_directory, colour_type_name)
-    export_file_name = os.path.join(export_directory_name, '%s.plist' % export_name)
+    export_file_name = os.path.join(export_directory_name, '%s.itermcolors' % export_name)
     print('writing (%s) (%s) to (%s)' % (colour_type_name, export_name, export_file_name))
 
     output_colour_lookup = {}
