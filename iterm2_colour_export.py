@@ -42,7 +42,8 @@ COLOUR_NAME_LIST = [
 
 
 class ScriptException(Exception):
-    """Derived exception to throw simple error messages"""
+    """Derived exception to throw simple error messages.
+    """
 
 
 def get_rgb_colour(colour_value_lookup):
@@ -85,22 +86,26 @@ def print_match_profiles(profile_list, colour_preset_lookup):
             print('profile (%s) matches (%s)' % (profile_lookup['Name'], ', '.join(match_list)))
 
 
-def make_subdirectory(output_directory, subdirectory_name):
-    if not os.path.isdir(output_directory):
-        raise ScriptException('directory not found (%s)' % output_directory)
+def make_directory(directory_name):
+    """Check output directory, making it if necessary.
+    """
 
-    export_directory_name = os.path.join(output_directory, subdirectory_name)
-    if not os.path.isdir(export_directory_name):
-        os.mkdir(export_directory_name)
+    if not os.path.exists(directory_name):
+        os.mkdir(directory_name)
 
-    return export_directory_name
+    elif not os.path.isdir(directory_name):
+        raise ScriptException('directory not found (%s)' % directory_name)
 
 
 def write_colour_plist(colour_lookup, export_name, colour_type_name, output_directory):
     """Write the colour scheme to a named file as a text plist.
     """
 
-    export_directory_name = make_subdirectory(output_directory, colour_type_name)
+    make_directory(output_directory)
+
+    export_directory_name = os.path.join(output_directory, colour_type_name)
+    make_directory(export_directory_name)
+
     export_file_name = os.path.join(export_directory_name, '%s.itermcolors' % export_name)
     print('writing (%s) (%s) to (%s)' % (colour_type_name, export_name, export_file_name))
 
