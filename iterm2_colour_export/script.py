@@ -181,10 +181,14 @@ def do_iterm2_colour_export():
     )
 
 
-if __name__ == "__main__":
+def run():
     try:
         do_iterm2_colour_export()
 
     except ScriptException as e:
         print('Error:', e, file = sys.stderr)
         sys.exit(1)
+
+
+if __name__ == "__main__":
+    do_iterm2_colour_export()
