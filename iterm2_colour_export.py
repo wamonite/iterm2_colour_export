@@ -86,6 +86,18 @@ def print_match_profiles(profile_list, colour_preset_lookup):
             print('profile (%s) matches (%s)' % (profile_lookup['Name'], ', '.join(match_list)))
 
 
+def print_unused_presets(profile_list, colour_preset_lookup):
+    unused_list = colour_preset_lookup.keys()
+    for profile_lookup in profile_list:
+        match_list = match_profile_to_preset(profile_lookup, colour_preset_lookup)
+        for preset in match_list:
+            if preset in unused_list:
+                unused_list.remove(preset)
+
+    for preset in unused_list:
+        print("preset (%s) unused" % preset)
+
+
 def make_directory(directory_name):
     """Check output directory, making it if necessary.
     """
@@ -130,7 +142,7 @@ def export_colours(profile_list, colour_preset_lookup, output_directory):
             write_colour_plist(colour_lookup, preset_name, 'preset', output_directory)
 
 
-def parse_iterm_plist(plist_file_name, match_profiles = True, output_directory = None):
+def parse_iterm_plist(plist_file_name, match_profiles = True, unused_presets = False, output_directory = None):
     """Parse the profile and preset colour schemes from the specified iTerm2 plist.
     """
 
@@ -140,7 +152,10 @@ def parse_iterm_plist(plist_file_name, match_profiles = True, output_directory =
     profile_list = plist.get('New Bookmarks', [])
     colour_preset_lookup = plist.get('Custom Color Presets', {})
 
-    if match_profiles:
+    if unused_presets:
+        print_unused_presets(profile_list, colour_preset_lookup)
+
+    elif match_profiles:
         print_match_profiles(profile_list, colour_preset_lookup)
 
     if output_directory:
@@ -153,13 +168,15 @@ def do_iterm2_colour_export():
         formatter_class = argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument('-p', '--plist', default = DEFAULT_PLIST, help = 'input plist file')
-    parser.add_argument('-n', '--no-match', action = 'store_false', help = 'do not match profiles against presets')
+    parser.add_argument('-n', '--no-match', action = 'store_false', help = 'do not show profiles that match presets')
+    parser.add_argument('-u', '--unused', action = 'store_true', help = 'show presets that are not used by any profiles (implies -n)')
     parser.add_argument('-o', '--output-directory', help = 'output directory')
     args = parser.parse_args()
 
     parse_iterm_plist(
         args.plist,
         args.no_match,
+        args.unused,
         args.output_directory
     )
 
